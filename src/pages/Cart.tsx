@@ -1,0 +1,170 @@
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Trash2, Plus, Minus, MessageCircle, ShoppingBag } from 'lucide-react';
+import { Header } from '../components/Header';
+import { Footer } from '../components/Footer';
+import { CartItem } from '../types';
+import { getCart, removeFromCart, updateCartQuantity, getCartItemsByVendor, generateWhatsAppLink } from '../utils/cart';
+
+export const addToCart = (product: Product, quantity: number = 1) => {
+  const cart = getCart();
+  const existingItem = cart.find(item => item.id === product.id);
+  
+  if (existingItem) {
+    existingItem.quantity += quantity;
+  } else {
+    cart.push({
+      ...product,
+      quantity: quantity
+    });
+  }
+  
+  localStorage.setItem('cart', JSON.stringify(cart));
+};
+
+export function Cart() {
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [vendorGroups, setVendorGroups] = useState<Map<string, CartItem[]>>(new Map());
+  useEffect(() => {
+    loadCart();
+    window.addEventListener('cartUpdated', loadCart);
+    return () => window.removeEventListener('cartUpdated', loadCart);
+  }, []);
+  const loadCart = () => {
+    const cartData = getCart();
+    setCart(cartData);
+    setVendorGroups(getCartItemsByVendor());
+  };
+  const handleRemove = (productId: string) => {
+    removeFromCart(productId);
+    loadCart();
+    window.dispatchEvent(new Event('cartUpdated'));
+  };
+  const handleQuantityChange = (productId: string, newQuantity: number) => {
+    if (newQuantity < 1) return;
+    updateCartQuantity(productId, newQuantity);
+    loadCart();
+    window.dispatchEvent(new Event('cartUpdated'));
+  };
+  const total = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  if (cart.length === 0) {
+    return <div className="min-h-screen bg-gray-50 flex flex-col">
+        <Header onSearch={() => {}} categories={[]} />
+
+        <main className="flex-1 flex items-center justify-center px-4">
+          <div className="text-center">
+            <ShoppingBag className="w-24 h-24 text-gray-300 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Your cart is empty
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Add some products to get started!
+            </p>
+            <Link to="/" className="inline-block bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 transition-colors font-medium">
+              Browse Products
+            </Link>
+          </div>
+        </main>
+
+        <Footer />
+      </div>;
+  }
+  return <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Header onSearch={() => {}} categories={[]} />
+
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">Shopping Cart</h1>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Cart Items */}
+          <div className="lg:col-span-2 space-y-6">
+            {Array.from(vendorGroups.entries()).map(([vendor, items]) => <div key={vendor} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div className="bg-gray-50 px-6 py-3 border-b border-gray-200 flex items-center justify-between">
+                  <h3 className="font-semibold text-gray-900">
+                    Vendor: {vendor}
+                  </h3>
+                  <a href={generateWhatsAppLink(items, items[0].product.whatsappNumber)} target="_blank" rel="noopener noreferrer" className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center space-x-2 text-sm font-medium">
+                    <MessageCircle className="w-4 h-4" />
+                    <span>Order from {vendor}</span>
+                  </a>
+                </div>
+
+                <div className="divide-y divide-gray-200">
+                  {items.map(item => <div key={item.product.id} className="p-6 flex items-center space-x-4">
+                      <img src={item.product.image} alt={item.product.name} className="w-24 h-24 object-cover rounded-lg" />
+
+                      <div className="flex-1 min-w-0">
+                        <Link to={`/product/${item.product.id}`} className="font-semibold text-gray-900 hover:text-emerald-600 transition-colors block mb-1">
+                          {item.product.name}
+                        </Link>
+                        <p className="text-sm text-gray-600 mb-2">
+                          {item.product.category}
+                        </p>
+                        <p className="text-lg font-bold text-gray-900">
+                          ₦{item.product.price.toFixed(2)}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2">
+                          <button onClick={() => handleQuantityChange(item.product.id, item.quantity - 1)} className="w-8 h-8 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors">
+                            <Minus className="w-4 h-4" />
+                          </button>
+                          <span className="text-lg font-semibold w-12 text-center">
+                            {item.quantity}
+                          </span>
+                          <button onClick={() => handleQuantityChange(item.product.id, item.quantity + 1)} className="w-8 h-8 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors">
+                            <Plus className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <button onClick={() => handleRemove(item.product.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>)}
+                </div>
+              </div>)}
+          </div>
+
+          {/* Order Summary */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-24">
+              <h2 className="text-xl font-bold text-gray-900 mb-6">
+                Order Summary
+              </h2>
+
+              <div className="space-y-4 mb-6">
+                <div className="flex justify-between text-gray-600">
+                  <span>
+                    Subtotal (
+                    {cart.reduce((sum, item) => sum + item.quantity, 0)} items)
+                  </span>
+                  <span className="font-semibold">₦{total.toFixed(2)}</span>
+                </div>
+
+                <div className="border-t border-gray-200 pt-4">
+                  <div className="flex justify-between text-lg font-bold text-gray-900">
+                    <span>Total</span>
+                    <span>₦{total.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-sm text-gray-600 text-center">
+                  Order from each vendor separately via WhatsApp
+                </p>
+
+                <Link to="/" className="block w-full text-center bg-gray-100 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-200 transition-colors font-medium">
+                  Continue Shopping
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+    </div>;
+}
