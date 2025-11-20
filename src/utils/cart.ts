@@ -1,5 +1,7 @@
 import { CartItem, Product } from '../types';
+
 const CART_KEY = 'shopping_cart';
+
 export const getCart = (): CartItem[] => {
   try {
     const cart = localStorage.getItem(CART_KEY);
@@ -9,6 +11,7 @@ export const getCart = (): CartItem[] => {
     return [];
   }
 };
+
 export const saveCart = (cart: CartItem[]): void => {
   try {
     localStorage.setItem(CART_KEY, JSON.stringify(cart));
@@ -16,24 +19,53 @@ export const saveCart = (cart: CartItem[]): void => {
     console.error('Error saving cart:', error);
   }
 };
+
 export const addToCart = (product: Product, quantity: number = 1): void => {
   const cart = getCart();
-  const existingItem = cart.find(item => item.product.id === product.id);
-  if (existingItem) {
-    existingItem.quantity += quantity;
+  
+  // Generate a unique identifier if product.id is empty
+  const productIdentifier = product.id || `${product.name}-${product.vendorName}`;
+  
+  console.log('Adding to cart:', { 
+    productId: productIdentifier, 
+    productName: product.name, 
+    quantity 
+  });
+  
+  const existingItemIndex = cart.findIndex(item => {
+    const itemId = item.product.id || `${item.product.name}-${item.product.vendorName}`;
+    return itemId === productIdentifier;
+  });
+  
+  if (existingItemIndex !== -1) {
+    cart[existingItemIndex].quantity += quantity;
+    console.log('Increased quantity for existing product');
   } else {
     cart.push({
-      product,
+      product: {
+        ...product,
+        id: productIdentifier // Ensure the product has an ID when stored
+      },
       quantity
     });
+    console.log('Added new product to cart');
   }
+  
   saveCart(cart);
+  console.log('Cart after add:', getCart());
 };
+
 export const removeFromCart = (productId: string): void => {
   const cart = getCart().filter(item => item.product.id !== productId);
   saveCart(cart);
 };
+
 export const updateCartQuantity = (productId: string, quantity: number): void => {
+  if (quantity <= 0) {
+    removeFromCart(productId);
+    return;
+  }
+  
   const cart = getCart();
   const item = cart.find(item => item.product.id === productId);
   if (item) {
@@ -41,12 +73,15 @@ export const updateCartQuantity = (productId: string, quantity: number): void =>
     saveCart(cart);
   }
 };
+
 export const clearCart = (): void => {
   localStorage.removeItem(CART_KEY);
 };
+
 export const getCartItemsByVendor = (): Map<string, CartItem[]> => {
   const cart = getCart();
   const vendorMap = new Map<string, CartItem[]>();
+  
   cart.forEach(item => {
     const vendor = item.product.vendorName;
     if (!vendorMap.has(vendor)) {
@@ -54,11 +89,33 @@ export const getCartItemsByVendor = (): Map<string, CartItem[]> => {
     }
     vendorMap.get(vendor)!.push(item);
   });
+  
   return vendorMap;
 };
+
 export const generateWhatsAppLink = (items: CartItem[], whatsappNumber: string): string => {
-  const message = items.map(item => `${item.product.name} (x${item.quantity}) - $${(item.product.price * item.quantity).toFixed(2)}`).join('%0A');
+  const message = items.map(item => 
+    `${item.product.name} (x${item.quantity}) - $${(item.product.price * item.quantity).toFixed(2)}`
+  ).join('%0A');
+  
   const total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
   const fullMessage = `Hello! I'd like to order:%0A%0A${message}%0A%0ATotal: $${total.toFixed(2)}`;
+  
   return `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${fullMessage}`;
+};
+
+// Additional utility functions
+export const getCartItemCount = (): number => {
+  const cart = getCart();
+  return cart.reduce((total, item) => total + item.quantity, 0);
+};
+
+export const getCartTotal = (): number => {
+  const cart = getCart();
+  return cart.reduce((total, item) => total + (item.product.price * item.quantity), 0);
+};
+
+export const isProductInCart = (productId: string): boolean => {
+  const cart = getCart();
+  return cart.some(item => item.product.id === productId);
 };
