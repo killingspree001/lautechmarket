@@ -97,7 +97,7 @@ export function ProductDetailModal({ product, isOpen, onClose }: ProductDetailMo
               <img
                 src={product.image}
                 alt={product.name}
-                className="w-full h-64 lg:h-full object-cover rounded-t-2xl lg:rounded-l-2xl lg:rounded-tr-none"
+                className="w-full h-full lg:h-full object-cover rounded-t-2xl lg:rounded-l-2xl lg:rounded-tr-none"
               />
               
               {/* Stock Badge */}

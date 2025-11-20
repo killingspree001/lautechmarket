@@ -8,12 +8,11 @@ export function Footer() {
           {/* About */}
           <div>
             <h3 className="text-white font-semibold text-lg mb-4">
-              About MarketHub
+              About LAUTECH Market
             </h3>
             <p className="text-sm leading-relaxed">
-              Your trusted multi-vendor marketplace connecting you with quality
-              products from verified sellers. Shop with confidence and order
-              directly via WhatsApp.
+              Discover electronics, fashion, beauty, home essentials, groceries and more. 
+              Support local businesses with your one-stop online shopping destination.
             </p>
           </div>
 
@@ -28,6 +27,7 @@ export function Footer() {
                   Home
                 </Link>
               </li>
+              {/*
               <li>
                 <Link to="/category/electronics" className="text-sm hover:text-emerald-400 transition-colors">
                   Electronics
@@ -43,6 +43,7 @@ export function Footer() {
                   Accessories
                 </Link>
               </li>
+              */}
             </ul>
           </div>
 
@@ -87,19 +88,19 @@ export function Footer() {
               <li className="flex items-start space-x-3">
                 <MapPin className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
                 <span className="text-sm">
-                  123 Market Street, Commerce City, CC 12345
+                  N/A
                 </span>
               </li>
               <li className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-emerald-400 flex-shrink-0" />
                 <a href="tel:+1234567890" className="text-sm hover:text-emerald-400 transition-colors">
-                  +1 (234) 567-890
+                  +234 902 952 2648
                 </a>
               </li>
               <li className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-emerald-400 flex-shrink-0" />
                 <a href="mailto:support@markethub.com" className="text-sm hover:text-emerald-400 transition-colors">
-                  support@markethub.com
+                  support@lautechmarket.com
                 </a>
               </li>
             </ul>
@@ -110,7 +111,7 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-sm">
-              © {new Date().getFullYear()} MarketHub. All rights reserved.
+              © {new Date().getFullYear()} LAUTECH Market. All rights reserved.
             </p>
 
             <div className="flex items-center space-x-6">
