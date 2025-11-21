@@ -11,8 +11,8 @@ export function Footer() {
               About LAUTECH Market
             </h3>
             <p className="text-sm leading-relaxed">
-              Discover electronics, fashion, beauty, home essentials, groceries and more. 
-              Support local businesses with your one-stop online shopping destination.
+              Lautech Market is the #1 online directory for student vendors in Ogbomoso. 
+              We replace the chaos of messy WhatsApp groups with a clean, searchable platform.
             </p>
           </div>
 

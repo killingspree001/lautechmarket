@@ -9,6 +9,14 @@ interface ProductCardProps {
   product: Product;
 }
 
+// Price formatting function
+const formatPrice = (price: number): string => {
+  return new Intl.NumberFormat('en-NG', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(price);
+};
+
 export function ProductCard({ product }: ProductCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -76,7 +84,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
             <div className="flex items-center justify-between mb-3">
               <span className="text-2xl font-bold text-gray-900">
-                ₦{product.price.toFixed(2)}
+                ₦{formatPrice(product.price)}
               </span>
               <span className="text-xs text-gray-500">
                 by {product.vendorName}

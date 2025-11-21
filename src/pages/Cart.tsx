@@ -6,6 +6,14 @@ import { Footer } from '../components/Footer';
 import { CartItem } from '../types';
 import { getCart, removeFromCart, updateCartQuantity, getCartItemsByVendor, generateWhatsAppLink, clearCart } from '../utils/cart';
 
+// Price formatting function
+const formatPrice = (price: number): string => {
+  return new Intl.NumberFormat('en-NG', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(price);
+};
+
 export const addToCart = (product: Product, quantity: number = 1) => {
   const cart = getCart();
   const existingItem = cart.find(item => item.id === product.id);
@@ -129,7 +137,7 @@ export function Cart() {
                           {item.product.category}
                         </p>
                         <p className="text-lg font-bold text-gray-900">
-                          ₦{item.product.price.toFixed(2)}
+                          ₦{formatPrice(item.product.price)}
                         </p>
                       </div>
 
@@ -179,13 +187,13 @@ export function Cart() {
                     Subtotal (
                     {cart.reduce((sum, item) => sum + item.quantity, 0)} items)
                   </span>
-                  <span className="font-semibold">₦{total.toFixed(2)}</span>
+                  <span className="font-semibold">₦{formatPrice(total)}</span>
                 </div>
 
                 <div className="border-t border-gray-200 pt-4">
                   <div className="flex justify-between text-lg font-bold text-gray-900">
                     <span>Total</span>
-                    <span>₦{total.toFixed(2)}</span>
+                    <span>₦{formatPrice(total)}</span>
                   </div>
                 </div>
               </div>

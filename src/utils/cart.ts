@@ -2,6 +2,14 @@ import { CartItem, Product } from '../types';
 
 const CART_KEY = 'shopping_cart';
 
+// Price formatting function
+const formatPrice = (price: number): string => {
+  return new Intl.NumberFormat('en-NG', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(price);
+};
+
 export const getCart = (): CartItem[] => {
   try {
     const cart = localStorage.getItem(CART_KEY);
@@ -95,11 +103,11 @@ export const getCartItemsByVendor = (): Map<string, CartItem[]> => {
 
 export const generateWhatsAppLink = (items: CartItem[], whatsappNumber: string): string => {
   const message = items.map(item => 
-    `${item.product.name} (x${item.quantity}) - $${(item.product.price * item.quantity).toFixed(2)}`
+    `${item.product.name} (x${item.quantity}) - ₦${formatPrice(item.product.price * item.quantity)}`
   ).join('%0A');
   
   const total = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-  const fullMessage = `Hello! I'd like to order:%0A%0A${message}%0A%0ATotal: $${total.toFixed(2)}`;
+  const fullMessage = `Hello! I'd like to order:%0A%0A${message}%0A%0ATotal: ₦${formatPrice(total)}`;
   
   return `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${fullMessage}`;
 };

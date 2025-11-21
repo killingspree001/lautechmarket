@@ -10,6 +10,14 @@ interface ProductDetailModalProps {
   onClose: () => void;
 }
 
+// Price formatting function
+const formatPrice = (price: number): string => {
+  return new Intl.NumberFormat('en-NG', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(price);
+};
+
 export function ProductDetailModal({ product, isOpen, onClose }: ProductDetailModalProps) {
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
@@ -59,7 +67,7 @@ export function ProductDetailModal({ product, isOpen, onClose }: ProductDetailMo
 
   const handleWhatsAppOrder = () => {
     if (product) {
-      const message = `Hello! I want to order:\n\n*${product.name}*\nQuantity: ${quantity}\nPrice: ₦${product.price * quantity}\n\nProduct Details: ${product.description}`;
+      const message = `Hello! I want to order:\n\n*${product.name}*\nQuantity: ${quantity}\nPrice: ₦${formatPrice(product.price * quantity)}\n\nProduct Details: ${product.description}`;
       const encodedMessage = encodeURIComponent(message);
       const whatsappUrl = `https://wa.me/${product.whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodedMessage}`;
       window.open(whatsappUrl, '_blank');
@@ -140,7 +148,7 @@ export function ProductDetailModal({ product, isOpen, onClose }: ProductDetailMo
                   </div> */}
 
                   <p className="text-2xl lg:text-3xl font-bold text-emerald-600">
-                    ₦{product.price.toLocaleString()}
+                    ₦{formatPrice(product.price)}
                   </p>
                 </div>
 
@@ -178,7 +186,7 @@ export function ProductDetailModal({ product, isOpen, onClose }: ProductDetailMo
                       </button>
                     </div>
                     <span className="text-lg font-semibold text-gray-900">
-                      Total: ₦{(product.price * quantity).toLocaleString()}
+                      Total: ₦{formatPrice(product.price * quantity)}
                     </span>
                   </div>
                 </div>
