@@ -10,24 +10,54 @@ import {
 } from "firebase/firestore";
 import { Product } from "../types";
 
+const generateProductId = (product: Product): string => {
+  if (product.id && product.id.trim() !== "") {
+    return product.id;
+  }
+  const baseId = `${product.name}-${product.vendorName}`
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  return `${baseId}-${Date.now()}`;
+};
+
 export const fetchProducts = async (): Promise<Product[]> => {
   const querySnapshot = await getDocs(collection(db, "products"));
-  return querySnapshot.docs.map(
+  const products = querySnapshot.docs.map(
     (doc) => ({ id: doc.id, ...doc.data() } as Product)
   );
+
+  return products.map((product) => ({
+    ...product,
+    id: product.id || generateProductId(product),
+  }));
 };
 
 export const getProductById = async (id: string): Promise<Product | null> => {
   const docRef = doc(db, "products", id);
   const docSnap = await getDoc(docRef);
-  return docSnap.exists()
-    ? ({ id: docSnap.id, ...docSnap.data() } as Product)
-    : null;
+  if (docSnap.exists()) {
+    const product = { id: docSnap.id, ...docSnap.data() } as Product;
+    return {
+      ...product,
+      id: product.id || generateProductId(product),
+    };
+  }
+  return null;
 };
 
 export const addProduct = async (data: Product): Promise<Product> => {
-  const docRef = await addDoc(collection(db, "products"), data);
-  return { ...data, id: docRef.id };
+  const productWithId = {
+    ...data,
+    id: data.id || generateProductId(data),
+  };
+
+  const { id, ...productData } = productWithId;
+  const docRef = await addDoc(collection(db, "products"), productData);
+
+  return { ...productWithId, id: docRef.id };
 };
 
 export const updateProduct = async (id: string, data: Product) => {

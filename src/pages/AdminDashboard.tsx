@@ -49,8 +49,25 @@ export function AdminDashboard() {
     setLoading(true);
     try {
       const data = await fetchProducts();
-      setProducts(data as Product[]);
-      calculateStats(data as Product[]);
+
+      const productsWithValidIds = data.map((product, index) => ({
+        ...product,
+        id: product.id || `product-${index}-${Date.now()}`,
+      }));
+
+      setProducts(productsWithValidIds as Product[]);
+      calculateStats(productsWithValidIds as Product[]);
+
+      const ids = productsWithValidIds.map((p) => p.id);
+      const emptyIds = ids.filter((id) => !id);
+      const duplicateIds = ids.filter((id, index) => ids.indexOf(id) !== index);
+
+      if (emptyIds.length > 0) {
+        console.warn("Products with empty IDs found:", emptyIds.length);
+      }
+      if (duplicateIds.length > 0) {
+        console.warn("Duplicate product IDs found:", duplicateIds);
+      }
     } catch (err) {
       console.error("Failed to load products:", err);
     } finally {
@@ -130,15 +147,20 @@ export function AdminDashboard() {
 
   const handleSelectProduct = (id: string) => {
     const newSelected = new Set(selectedProducts);
-    if (newSelected.has(id)) newSelected.delete(id);
-    else newSelected.add(id);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
     setSelectedProducts(newSelected);
   };
 
   const handleSelectAll = () => {
-    if (selectedProducts.size === products.length)
+    if (selectedProducts.size === products.length) {
       setSelectedProducts(new Set());
-    else setSelectedProducts(new Set(products.map((p) => p.id)));
+    } else {
+      setSelectedProducts(new Set(products.map((p) => p.id)));
+    }
   };
 
   const handleBulkMarkOutOfStock = async () => {
