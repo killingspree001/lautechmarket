@@ -49,24 +49,24 @@ export function AdminDashboard() {
     setLoading(true);
     try {
       const data = await fetchProducts();
+      console.log("Fetched products with Firestore IDs:", data);
 
-      const productsWithValidIds = data.map((product, index) => ({
-        ...product,
-        id: product.id || `product-${index}-${Date.now()}`,
-      }));
+      const validProducts = data.filter(
+        (product) => product.id && product.id.trim() !== ""
+      );
 
-      setProducts(productsWithValidIds as Product[]);
-      calculateStats(productsWithValidIds as Product[]);
+      setProducts(validProducts);
+      calculateStats(validProducts);
 
-      const ids = productsWithValidIds.map((p) => p.id);
-      const emptyIds = ids.filter((id) => !id);
-      const duplicateIds = ids.filter((id, index) => ids.indexOf(id) !== index);
-
-      if (emptyIds.length > 0) {
-        console.warn("Products with empty IDs found:", emptyIds.length);
-      }
-      if (duplicateIds.length > 0) {
-        console.warn("Duplicate product IDs found:", duplicateIds);
+      const invalidProducts = data.filter(
+        (product) => !product.id || product.id.trim() === ""
+      );
+      if (invalidProducts.length > 0) {
+        console.warn(
+          "Found products with empty IDs (will be filtered out):",
+          invalidProducts.length
+        );
+        console.warn("Invalid products:", invalidProducts);
       }
     } catch (err) {
       console.error("Failed to load products:", err);
@@ -100,22 +100,28 @@ export function AdminDashboard() {
 
   const handleSave = async (product: Product) => {
     try {
+      console.log("Saving product:", product);
       let updatedProducts: Product[] = [];
 
       if (editingProduct) {
+        console.log("Updating existing product with Firestore ID:", product.id);
         await updateProduct(product.id, product);
         updatedProducts = products.map((p) =>
           p.id === product.id ? product : p
         );
       } else {
+        console.log("Adding new product");
         const newProduct = await addProduct(product);
+        console.log("New product added with Firestore ID:", newProduct.id);
         updatedProducts = [...products, newProduct];
       }
 
       setProducts(updatedProducts);
       calculateStats(updatedProducts);
+      console.log("Save successful");
     } catch (err) {
       console.error("Error saving product:", err);
+      alert("Error saving product: " + (err as Error).message);
     } finally {
       setShowForm(false);
       setEditingProduct(null);
@@ -131,6 +137,7 @@ export function AdminDashboard() {
     if (!window.confirm("Are you sure you want to delete this product?"))
       return;
     try {
+      console.log("Deleting product with Firestore ID:", id);
       await deleteProduct(id);
       const updated = products.filter((p) => p.id !== id);
       setProducts(updated);
@@ -140,8 +147,10 @@ export function AdminDashboard() {
         newSet.delete(id);
         return newSet;
       });
+      console.log("Delete successful");
     } catch (err) {
       console.error("Error deleting product:", err);
+      alert("Error deleting product: " + (err as Error).message);
     }
   };
 
@@ -164,15 +173,27 @@ export function AdminDashboard() {
   };
 
   const handleBulkMarkOutOfStock = async () => {
-    const updatedProducts = products.map((p) =>
-      selectedProducts.has(p.id) ? { ...p, inStock: false } : p
-    );
-    for (const p of updatedProducts.filter((p) => selectedProducts.has(p.id))) {
-      await updateProduct(p.id, p);
+    try {
+      console.log("Bulk marking out of stock:", Array.from(selectedProducts));
+      const updatedProducts = products.map((p) =>
+        selectedProducts.has(p.id) ? { ...p, inStock: false } : p
+      );
+
+      for (const p of updatedProducts.filter((p) =>
+        selectedProducts.has(p.id)
+      )) {
+        console.log("Updating product with Firestore ID:", p.id);
+        await updateProduct(p.id, p);
+      }
+
+      setProducts(updatedProducts);
+      calculateStats(updatedProducts);
+      setSelectedProducts(new Set());
+      console.log("Bulk update successful");
+    } catch (err) {
+      console.error("Error in bulk mark out of stock:", err);
+      alert("Error in bulk operation: " + (err as Error).message);
     }
-    setProducts(updatedProducts);
-    calculateStats(updatedProducts);
-    setSelectedProducts(new Set());
   };
 
   const handleBulkDelete = async () => {
@@ -180,13 +201,21 @@ export function AdminDashboard() {
     if (!window.confirm(`Delete ${selectedProducts.size} selected products?`))
       return;
 
-    for (const id of selectedProducts) {
-      await deleteProduct(id);
+    try {
+      console.log("Bulk deleting:", Array.from(selectedProducts));
+      for (const id of selectedProducts) {
+        console.log("Deleting product with Firestore ID:", id);
+        await deleteProduct(id);
+      }
+      const updated = products.filter((p) => !selectedProducts.has(p.id));
+      setProducts(updated);
+      calculateStats(updated);
+      setSelectedProducts(new Set());
+      console.log("Bulk delete successful");
+    } catch (err) {
+      console.error("Error in bulk delete:", err);
+      alert("Error in bulk delete: " + (err as Error).message);
     }
-    const updated = products.filter((p) => !selectedProducts.has(p.id));
-    setProducts(updated);
-    calculateStats(updated);
-    setSelectedProducts(new Set());
   };
 
   if (!authChecked || loading) {
@@ -391,9 +420,14 @@ export function AdminDashboard() {
                           alt={product.name}
                           className="w-12 h-12 object-cover rounded"
                         />
-                        <span className="font-medium text-gray-900">
-                          {product.name}
-                        </span>
+                        <div>
+                          <span className="font-medium text-gray-900 block">
+                            {product.name}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            ID: {product.id}
+                          </span>
+                        </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">

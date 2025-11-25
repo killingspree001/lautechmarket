@@ -64,12 +64,20 @@ export function Footer() {
             <ul className="space-y-2">
               <li>
                 <a
-                  href="https://wa.me/1234567890"
+                  href="https://wa.me/2348151993706"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
                   Contact Support
+                </a>
+              </li>
+              <li className="flex items-center space-x-3 py-0.5">
+                <a
+                  href="mailto:support@markethub.com"
+                  className="text-sm hover:text-emerald-400 transition-colors"
+                >
+                  support@lautechmarket.com
                 </a>
               </li>
               <li>
@@ -83,9 +91,12 @@ export function Footer() {
               <li>
                 <Link
                   to="/shipping"
-                  className="text-sm hover:text-emerald-400 transition-colors"
+                  className="inline-flex items-center space-x-2 text-sm text-gray-500 cursor-not-allowed"
                 >
                   Shipping Info
+                  <span className="bg-emerald-500 text-white text-xs px-2 py-0.5 rounded-full font-semibold ml-1">
+                    SOON
+                  </span>
                 </Link>
               </li>
               <li>
@@ -101,29 +112,23 @@ export function Footer() {
 
           <div>
             <h3 className="text-white font-semibold text-lg mb-4">
-              Contact Us
+              Make Money
             </h3>
-            <ul className="space-y-3">
-              <li className="flex items-start space-x-3">
-                <MapPin className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                <span className="text-sm">N/A</span>
-              </li>
-              <li className="flex items-center space-x-3">
-                <Phone className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+            <ul className="space-y-2">
+              <li className="flex items-center space-x-3 py-0.5">
                 <a
-                  href="tel:+1234567890"
+                  href="https://wa.me/2348151993706"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
-                  +234 123 456 7890
+                  Sell on LAUTECH Market
                 </a>
               </li>
-              <li className="flex items-center space-x-3">
-                <Mail className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+              <li className="flex items-center space-x-3 py-0.5">
                 <a
-                  href="mailto:support@markethub.com"
+                  href="https://chat.whatsapp.com/J8tSxuYVX5ZJKy8WESiE6T"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
-                  support@lautechmarket.com
+                  Vendor Hub
                 </a>
               </li>
             </ul>

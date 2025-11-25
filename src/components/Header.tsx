@@ -80,12 +80,21 @@ export function Header({ onSearch, categories }: HeaderProps) {
             </div>
 
             <a
-              href="https://wa.me/1234567890"
+              href="https://wa.me/2348151993706"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-700 hover:text-emerald-600 transition-colors"
             >
               Contact Support
+            </a>
+
+            <a
+              href="https://wa.me/2348151993706"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-700 hover:text-emerald-600 transition-colors"
+            >
+              Sell Now
             </a>
 
             <Link to="/cart" className="relative">
@@ -161,6 +170,15 @@ export function Header({ onSearch, categories }: HeaderProps) {
               className="block py-2 text-gray-700 hover:text-emerald-600"
             >
               Contact Support
+            </a>
+
+            <a
+              href="https://wa.me/2348151993706"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-700 hover:text-emerald-600 transition-colors"
+            >
+              Sell Now
             </a>
           </nav>
         </div>
