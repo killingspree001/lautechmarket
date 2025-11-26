@@ -32,7 +32,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
   const handleWhatsAppClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const message = `Hello! I Saw your product on LAUTECH Market. I'm interested in ${encodeURIComponent(product.name)}`;
+    const message = `Hello! I Saw your product on LAUTECH Market. I'm interested in: ${encodeURIComponent(product.name)}`;
     const whatsappUrl = `https://wa.me/${product.whatsappNumber.replace(/[^0-9]/g, '')}?text=${message}`;
     window.open(whatsappUrl, '_blank');
   };

@@ -3,10 +3,7 @@ import { Link } from "react-router-dom";
 import {
   Facebook,
   Twitter,
-  Instagram,
-  Mail,
-  Phone,
-  MapPin,
+  Instagram
 } from "lucide-react";
 export function Footer() {
   return (
@@ -63,14 +60,12 @@ export function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <a
-                  href="https://wa.me/2348151993706"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  to="/contact"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
                   Contact Support
-                </a>
+                </Link>
               </li>
               <li className="flex items-center space-x-3 py-0.5">
                 <a
@@ -117,7 +112,7 @@ export function Footer() {
             <ul className="space-y-2">
               <li className="flex items-center space-x-3 py-0.5">
                 <a
-                  href="https://wa.me/2348151993706"
+                  href="https://wa.me/2348151993706?text=Good%20day%20Admin,%20I%20am%20interested%20in%20selling%20on%20LAUTECH%20Market"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
                   Sell on LAUTECH Market
@@ -136,31 +131,28 @@ export function Footer() {
         </div>
 
         <div className="mt-12 pt-8 border-t border-gray-800">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+          <div className="flex flex-col md:flex-row space-x-10 justify-center items-center space-y-4 md:space-y-0">
             <p className="text-sm">
               © {new Date().getFullYear()} LAUTECH Market. All rights reserved.
             </p>
 
             <div className="flex items-center space-x-6">
               <a
-                href="https://facebook.com"
-                target="_blank"
+                href="#"
                 rel="noopener noreferrer"
                 className="hover:text-emerald-400 transition-colors"
               >
                 <Facebook className="w-5 h-5" />
               </a>
               <a
-                href="https://twitter.com"
-                target="_blank"
+                href="#"
                 rel="noopener noreferrer"
                 className="hover:text-emerald-400 transition-colors"
               >
                 <Twitter className="w-5 h-5" />
               </a>
               <a
-                href="https://instagram.com"
-                target="_blank"
+                href="#"
                 rel="noopener noreferrer"
                 className="hover:text-emerald-400 transition-colors"
               >

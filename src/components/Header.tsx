@@ -79,17 +79,12 @@ export function Header({ onSearch, categories }: HeaderProps) {
               )}
             </div>
 
-            <a
-              href="https://wa.me/2348151993706"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-700 hover:text-emerald-600 transition-colors"
-            >
-              Contact Support
-            </a>
+            <Link to="/contact" className="text-gray-700 hover:text-emerald-600 transition-colors">
+            Contact Support
+          </Link>
 
             <a
-              href="https://wa.me/2348151993706"
+              href="https://wa.me/2348151993706?text=Good%20day%20Admin,%20I%20am%20interested%20in%20selling%20on%20LAUTECH%20Market"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-700 hover:text-emerald-600 transition-colors"

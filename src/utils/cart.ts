@@ -121,7 +121,7 @@ export const generateWhatsAppLink = (
     (sum, item) => sum + item.product.price * item.quantity,
     0
   );
-  const fullMessage = `Hello! I'd like to order:%0A%0A${message}%0A%0ATotal: ₦${formatPrice(
+  const fullMessage = `Hello! I Saw your product on LAUTECH Market. I'm interested in:%0A%0A${message}%0A%0ATotal: ₦${formatPrice(
     total
   )}`;
 
