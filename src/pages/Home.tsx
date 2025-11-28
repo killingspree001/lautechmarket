@@ -6,6 +6,7 @@ import { FilterSidebar } from "../components/FilterSidebar";
 import { ProductCard } from "../components/ProductCard";
 import { Product, FilterOptions } from "../types";
 import { getAllProducts } from "../services/products";
+import { AlertTriangleIcon } from "lucide-react";
 
 export function Home() {
   const { category } = useParams<{ category?: string }>();
@@ -23,18 +24,16 @@ export function Home() {
     priceRange: { min: 0, max: 500 },
   });
 
-  // ✅ Fetch from Firestore instead of JSONBin/local storage
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
 
       try {
-        const data = await getAllProducts(); // <-- Firestore call
+        const data = await getAllProducts();
         console.log("🔥 Firestore products:", data);
 
         setProducts(data);
 
-        // Build filters dynamically
         const categories = [...new Set(data.map((p) => p.category))];
         const prices = data.map((p) => p.price);
         const minPrice = Math.floor(Math.min(...prices));
@@ -59,7 +58,6 @@ export function Home() {
     fetchProducts();
   }, []);
 
-  // If URL has /category/x — preselect category filter
   useEffect(() => {
     if (category) {
       setSelectedCategories([
@@ -68,7 +66,6 @@ export function Home() {
     }
   }, [category]);
 
-  // Apply all filters
   useEffect(() => {
     let filtered = products;
 
@@ -107,7 +104,6 @@ export function Home() {
     setPriceRange(filterOptions.priceRange);
   };
 
-  // Loading Spinner
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -139,6 +135,22 @@ export function Home() {
             />
           </div>
         </div>
+
+        <section className="py-4">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="p-4 border border-emerald-300">
+            <div className="flex items-start gap-3">
+              <AlertTriangleIcon className="w-6 h-6 text-emerald-300 flex-shrink-0 mt-1" />
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-1">Disclaimer</h3>
+                <p className="text-black">
+                  Do not make any preorder. Always PAY ON DELIVERY!
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-6">

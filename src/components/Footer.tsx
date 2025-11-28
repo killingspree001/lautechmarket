@@ -34,23 +34,6 @@ export function Footer() {
                   Home
                 </Link>
               </li>
-              {/*
-              <li>
-                <Link to="/category/electronics" className="text-sm hover:text-emerald-400 transition-colors">
-                  Electronics
-                </Link>
-              </li>
-              <li>
-                <Link to="/category/fabric" className="text-sm hover:text-emerald-400 transition-colors">
-                  Fabric
-                </Link>
-              </li>
-              <li>
-                <Link to="/category/accessories" className="text-sm hover:text-emerald-400 transition-colors">
-                  Accessories
-                </Link>
-              </li>
-              */}
             </ul>
           </div>
 
@@ -69,10 +52,10 @@ export function Footer() {
               </li>
               <li className="flex items-center space-x-3 py-0.5">
                 <a
-                  href="mailto:support@markethub.com"
+                  href="mailto:lautechmarket.help@gmail.com"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
-                  support@lautechmarket.com
+                  lautechmarket.help@gmail.com
                 </a>
               </li>
               <li>

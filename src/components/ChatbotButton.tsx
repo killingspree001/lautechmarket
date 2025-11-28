@@ -4,7 +4,7 @@ import { MessageCircle, X, Send, Bot } from 'lucide-react';
 export function ChatbotButton() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Array<{ text: string; isUser: boolean }>>([
-    { text: "Hello! I'm your MarketHub assistant. How can I help you today?", isUser: false }
+    { text: "Hello! I'm your LAUTECH Market assistant. How can I help you today?", isUser: false }
   ]);
   const [inputMessage, setInputMessage] = useState('');
 
@@ -52,7 +52,7 @@ export function ChatbotButton() {
                 <Bot className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-semibold">MarketHub Assistant</h3>
+                <h3 className="font-semibold">LAUTECH Market Assistant</h3>
                 <p className="text-emerald-100 text-sm">Online • Ready to help</p>
               </div>
             </div>

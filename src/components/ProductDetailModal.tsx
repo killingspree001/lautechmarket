@@ -74,11 +74,11 @@ export function ProductDetailModal({
 
   const handleWhatsAppOrder = () => {
     if (product) {
-      const message = `Hello! I want to order:\n\n*${
+      const message = `Hello! I want to order:\n\n${
         product.name
-      }*\nQuantity: ${quantity}\nPrice: ₦${formatPrice(
+      }\nQuantity: ${quantity}\nPrice: ₦${formatPrice(
         product.price * quantity
-      )}\n\nProduct Details: ${product.description}`;
+      )}`;
       const encodedMessage = encodeURIComponent(message);
       const whatsappUrl = `https://wa.me/${product.whatsappNumber.replace(
         /[^0-9]/g,

@@ -141,34 +141,16 @@ export function Header({ onSearch, categories }: HeaderProps) {
 
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-gray-200 bg-white">
-          <nav className="px-4 py-4 space-y-4">
-            <div>
-              <p className="text-sm font-semibold text-gray-500 mb-2">
-                Categories
-              </p>
-              {categories.map((category) => (
-                <Link
-                  key={category}
-                  to={`/category/${category.toLowerCase()}`}
-                  className="block py-2 text-gray-700 hover:text-emerald-600"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {category}
-                </Link>
-              ))}
-            </div>
+          <nav className="px-4 py-2 space-y-4">
+            
 
-            <a
-              href="https://wa.me/1234567890"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block py-2 text-gray-700 hover:text-emerald-600"
-            >
+            <Link to="/contact"
+              className="block py-2 text-gray-700 hover:text-emerald-600">
               Contact Support
-            </a>
+            </Link>
 
             <a
-              href="https://wa.me/2348151993706"
+              href="https://wa.me/2348151993706?text=Good%20day%20Admin,%20I%20am%20interested%20in%20selling%20on%20LAUTECH%20Market"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-700 hover:text-emerald-600 transition-colors"

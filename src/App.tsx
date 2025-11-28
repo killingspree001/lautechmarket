@@ -8,6 +8,7 @@ import { AdminDashboard } from "./pages/AdminDashboard";
 import { authStateListener } from "./services/auth";
 import { Contact } from "./pages/Contact";
 import { ChatbotButton } from "./components/ChatbotButton";
+import ScrollToTop from './components/ScrollToTop';
 
 function AdminProtectedRoute({ children }: { children: JSX.Element }) {
   const [loading, setLoading] = useState(true);
@@ -63,6 +64,7 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <ChatbotButton />
+      <ScrollToTop />
     </BrowserRouter>
   );
 }
