@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-
 import { Home } from "./pages/Home";
 import { Cart } from "./pages/Cart";
 import { AdminLogin } from "./pages/AdminLogin";
 import { AdminDashboard } from "./pages/AdminDashboard";
-import { authStateListener } from "./services/auth";
+import { ProductDetail } from "./pages/ProductDetail";
 import { Contact } from "./pages/Contact";
-import { ChatbotButton } from "./components/ChatbotButton";
-import ScrollToTop from './components/ScrollToTop';
 import { FAQ } from "./pages/FAQ";
+import { authStateListener } from "./services/auth";
+import { ChatbotButton } from "./components/ChatbotButton";
+import ScrollToTop from "./components/ScrollToTop";
 
 function AdminProtectedRoute({ children }: { children: JSX.Element }) {
   const [loading, setLoading] = useState(true);
@@ -46,12 +46,14 @@ function AdminProtectedRoute({ children }: { children: JSX.Element }) {
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/category/:category" element={<Home />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/faq" element={<FAQ />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
 
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route
@@ -66,7 +68,6 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <ChatbotButton />
-      <ScrollToTop />
     </BrowserRouter>
   );
 }

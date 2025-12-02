@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
@@ -30,7 +30,7 @@ export function Home() {
 
       try {
         const data = await getAllProducts();
-        console.log("🔥 Firestore products:", data);
+        console.log(" Firestore products:", data);
 
         setProducts(data);
 
@@ -49,7 +49,7 @@ export function Home() {
           max: maxPrice,
         });
       } catch (err) {
-        console.error("❌ Firestore Load Error:", err);
+        console.error(" Firestore Load Error:", err);
       }
 
       setLoading(false);
@@ -137,20 +137,22 @@ export function Home() {
         </div>
 
         <section className="py-4">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="p-4 border border-emerald-300">
-            <div className="flex items-start gap-3">
-              <AlertTriangleIcon className="w-6 h-6 text-emerald-300 flex-shrink-0 mt-1" />
-              <div>
-                <h3 className="text-lg font-semibold text-white mb-1">Disclaimer</h3>
-                <p className="text-black">
-                  Do not make any preorder. Always PAY ON DELIVERY!
-                </p>
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="p-4 border border-emerald-300">
+              <div className="flex items-start gap-3">
+                <AlertTriangleIcon className="w-6 h-6 text-emerald-300 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-1">
+                    Disclaimer
+                  </h3>
+                  <p className="text-black">
+                    Do not make any preorder. Always PAY ON DELIVERY!
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-6">

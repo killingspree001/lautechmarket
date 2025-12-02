@@ -1,10 +1,5 @@
-import React from "react";
 import { Link } from "react-router-dom";
-import {
-  Facebook,
-  Twitter,
-  Instagram
-} from "lucide-react";
+import { Facebook, Twitter, Instagram } from "lucide-react";
 export function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-300 mt-16">
@@ -34,12 +29,20 @@ export function Footer() {
                   Home
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/faq"
+                  className="text-sm hover:text-emerald-400 transition-colors"
+                >
+                  FAQ
+                </Link>
+              </li>
             </ul>
           </div>
 
           <div>
             <h3 className="text-white font-semibold text-lg mb-4">
-              Customer Service
+              Contact Support
             </h3>
             <ul className="space-y-2">
               <li>
@@ -57,14 +60,6 @@ export function Footer() {
                 >
                   lautechmarket.help@gmail.com
                 </a>
-              </li>
-              <li>
-                <Link
-                  to="/faq"
-                  className="text-sm hover:text-emerald-400 transition-colors"
-                >
-                  FAQ
-                </Link>
               </li>
               <li>
                 <Link

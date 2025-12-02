@@ -1,5 +1,5 @@
 {
-  "name": "Multi Vendor Mini Ecommerce",
+  "name": "multi-vendor-mini-ecommerce",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -16,10 +16,12 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.2"
   },
+  "license": "MIT",
+  "author": "Timothy <timothybayode76@gmail.com>",
   "devDependencies": {
-    "@types/node": "^20.11.18",
-    "@types/react": "^18.3.1",
-    "@types/react-dom": "^18.3.1",
+    "@types-node": "^20.11.18",
+    "@types-react": "^18.3.1",
+    "@types-react-dom": "^18.3.1",
     "@typescript-eslint/eslint-plugin": "^5.54.0",
     "@typescript-eslint/parser": "^5.54.0",
     "@vitejs/plugin-react": "^4.2.1",

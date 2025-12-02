@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Search, ShoppingCart, Menu, X, ChevronDown } from "lucide-react";
-import { Product } from "../types";
 import { getCart } from "../utils/cart";
 
 interface HeaderProps {
@@ -37,7 +36,7 @@ export function Header({ onSearch, categories }: HeaderProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2">
-            <img src="./both.svg" alt="Logo word mark" className="w-40" />
+            <img src="/both.svg" alt="LAUTECH Market" className="w-40" />
           </Link>
 
           <div className="hidden md:flex flex-1 max-w-2xl mx-8">
