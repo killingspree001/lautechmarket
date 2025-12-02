@@ -19,7 +19,7 @@
   "license": "MIT",
   "author": "Timothy <timothybayode76@gmail.com>",
   "devDependencies": {
-    "@types-node": "^20.11.18",
+    "@types/node": "^20.11.18",
     "@types-react": "^18.3.1",
     "@types-react-dom": "^18.3.1",
     "@typescript-eslint/eslint-plugin": "^5.54.0",
