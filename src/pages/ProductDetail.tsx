@@ -269,9 +269,6 @@ export function ProductDetail() {
                       <p className="font-medium text-sm sm:text-base truncate">
                         {product.vendorName}
                       </p>
-                      <p className="text-xs sm:text-sm text-gray-500">
-                        Verified Vendor
-                      </p>
                     </div>
                   </div>
                   <a
