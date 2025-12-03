@@ -273,13 +273,13 @@ export function ProductDetail() {
                   </div>
                   <a
                     href={`https://wa.me/${product.whatsappNumber.replace(
-                      /[^0-9]/g,
-                      ""
-                    )}`}
+                    /[^0-9]/g,
+                    ""
+                    )}?text=${encodeURIComponent(`Hi ${product.vendorName} , I saw your store on LAUTECH Marketplace and I will like to...`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-emerald-600 hover:text-emerald-700 text-xs sm:text-sm font-medium flex-shrink-0 ml-2"
-                  >
+                    >
                     Contact
                   </a>
                 </div>

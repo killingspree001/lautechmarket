@@ -33,10 +33,7 @@ This repo intentionally keeps features focused so you can plug in additional ser
 - Seller onboarding & store management
 - Product CRUD with categories and simple inventory
 - Cart and checkout flows
-- Order lifecycle: placed → paid → shipped → completed/returned
-- Basic payout flow / commission calculation
-- REST API for backend; example frontend (SPA) integration
-- Authentication (JWT / session example)
+- Authentication (Firebase)
 - Validation, error handling, and simple rate limiting examples
 - Tests for core business logic
 

@@ -138,9 +138,9 @@ export function Home() {
 
         <section className="py-4">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="p-4 border border-emerald-300">
+            <div className="p-4 border bg-emerald-300">
               <div className="flex items-start gap-3">
-                <AlertTriangleIcon className="w-6 h-6 text-emerald-300 flex-shrink-0 mt-1" />
+                <AlertTriangleIcon className="w-6 h-6 text-black flex-shrink-0 mt-1" />
                 <div>
                   <h3 className="text-lg font-semibold text-white mb-1">
                     Disclaimer
