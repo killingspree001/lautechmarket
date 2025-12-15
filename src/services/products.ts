@@ -1,14 +1,6 @@
-import { db } from "../firebase";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  getDoc,
-  doc,
-  updateDoc,
-  deleteDoc,
-} from "firebase/firestore";
 import { Product } from "../types";
+import { db } from "../firebase";
+import { collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc } from "firebase/firestore";
 
 export const fetchProducts = async (): Promise<Product[]> => {
   const querySnapshot = await getDocs(collection(db, "products"));
@@ -28,11 +20,10 @@ export const getProductById = async (id: string): Promise<Product | null> => {
 export const addProduct = async (data: Product): Promise<Product> => {
   const { id, ...productData } = data;
   const docRef = await addDoc(collection(db, "products"), productData);
-  
   return { id: docRef.id, ...productData };
 };
 
-export const updateProduct = async (id: string, data: Product) => {
+export const updateProduct = async (id: string, data: Partial<Product>) => {
   const docRef = doc(db, "products", id);
   const { id: _, ...updateData } = data;
   await updateDoc(docRef, updateData);
@@ -41,6 +32,11 @@ export const updateProduct = async (id: string, data: Product) => {
 export const deleteProduct = async (id: string) => {
   const docRef = doc(db, "products", id);
   await deleteDoc(docRef);
+};
+
+export const getVendorProducts = async (vendorId: string): Promise<Product[]> => {
+  const allProducts = await fetchProducts();
+  return allProducts.filter((p) => p.vendorId === vendorId);
 };
 
 export const getAllProducts = fetchProducts;

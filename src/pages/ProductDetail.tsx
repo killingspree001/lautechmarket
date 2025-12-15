@@ -8,13 +8,17 @@ import {
   ChevronRight,
   Check,
   ChevronLeft,
+  Store,
 } from "lucide-react";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
-import { Product } from "../types";
+import { Product, Vendor } from "../types";
 import { getProductById, fetchProducts } from "../services/products";
 import { addToCart } from "../utils/cart";
 import { ShareButton } from "../components/ShareButton";
+import { VerifiedBadge } from "../components/VerifiedBadge";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -26,6 +30,7 @@ export function ProductDetail() {
   const [isInCart, setIsInCart] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
+  const [vendor, setVendor] = useState<Vendor | null>(null);
 
   useEffect(() => {
     loadProduct();
@@ -55,6 +60,25 @@ export function ProductDetail() {
           new Set(allProducts.map((p) => p.category))
         );
         setCategories(allCategories);
+
+        // Fetch vendor to get verification status
+        if (data.vendorId) {
+          const vendorDoc = await getDoc(doc(db, "vendors", data.vendorId));
+          if (vendorDoc.exists()) {
+            const vendorData = vendorDoc.data();
+            setVendor({
+              id: vendorDoc.id,
+              name: vendorData.name,
+              email: vendorData.email,
+              password: "",
+              whatsappNumber: vendorData.whatsappNumber,
+              businessName: vendorData.businessName,
+              description: vendorData.description || "",
+              isVerified: vendorData.isVerified || false,
+              createdAt: vendorData.createdAt?.toDate() || new Date(),
+            });
+          }
+        }
       }
     } catch (error) {
       console.error("Error loading product:", error);
@@ -93,11 +117,10 @@ export function ProductDetail() {
   const handleWhatsAppOrder = () => {
     if (!product) return;
 
-    const message = `Hello! I want to order:\n\n*${
-      product.name
-    }*\nQuantity: ${quantity}\nPrice: ₦${formatPrice(
-      product.price * quantity
-    )}\n\nProduct Details: ${product.description}`;
+    const message = `Hello! I want to order:\n\n*${product.name
+      }*\nQuantity: ${quantity}\nPrice: ₦${formatPrice(
+        product.price * quantity
+      )}\n\nProduct Details: ${product.description}`;
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${product.whatsappNumber.replace(
       /[^0-9]/g,
@@ -116,7 +139,7 @@ export function ProductDetail() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col">
-        <Header onSearch={() => {}} categories={categories} />
+        <Header onSearch={() => { }} categories={categories} />
         <div className="flex-1 flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
         </div>
@@ -128,7 +151,7 @@ export function ProductDetail() {
   if (!product) {
     return (
       <div className="min-h-screen bg-gray-50 flex flex-col">
-        <Header onSearch={() => {}} categories={categories} />
+        <Header onSearch={() => { }} categories={categories} />
         <div className="flex-1 flex flex-col items-center justify-center px-4">
           <Package className="w-24 h-24 text-gray-300 mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -152,7 +175,7 @@ export function ProductDetail() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Header onSearch={() => {}} categories={categories} />
+      <Header onSearch={() => { }} categories={categories} />
 
       <main className="flex-1">
         <div className="bg-white border-b border-gray-200">
@@ -215,9 +238,15 @@ export function ProductDetail() {
                     <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 sm:mb-4 leading-tight">
                       {product.name}
                     </h1>
-                    <span className="text-xs sm:text-sm text-emerald-600 font-semibold">
-                      {product.inStock ? "In Stock" : "Out of Stock"}
-                    </span>
+                    {product.inStock ? (
+                      <span className="inline-flex items-center bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
+                        ✓ In Stock
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
+                        ✕ Out of Stock
+                      </span>
+                    )}
                   </div>
 
                   <div className="flex-shrink-0">
@@ -266,20 +295,30 @@ export function ProductDetail() {
                       </span>
                     </div>
                     <div className="min-w-0">
-                      <p className="font-medium text-sm sm:text-base truncate">
+                      <p className="font-medium text-sm sm:text-base truncate flex items-center gap-1">
                         {product.vendorName}
+                        {vendor?.isVerified && <VerifiedBadge size="sm" />}
                       </p>
+                      {product.vendorId && (
+                        <Link
+                          to={`/store/${product.vendorId}`}
+                          className="flex items-center space-x-1 text-xs text-emerald-600 hover:text-emerald-700 transition-colors"
+                        >
+                          <Store className="w-3 h-3" />
+                          <span>View Store</span>
+                        </Link>
+                      )}
                     </div>
                   </div>
                   <a
                     href={`https://wa.me/${product.whatsappNumber.replace(
-                    /[^0-9]/g,
-                    ""
+                      /[^0-9]/g,
+                      ""
                     )}?text=${encodeURIComponent(`Hi ${product.vendorName} , I saw your store on LAUTECH Marketplace and I will like to...`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-emerald-600 hover:text-emerald-700 text-xs sm:text-sm font-medium flex-shrink-0 ml-2"
-                    >
+                  >
                     Contact
                   </a>
                 </div>
@@ -318,13 +357,12 @@ export function ProductDetail() {
                   <button
                     onClick={handleAddToCart}
                     disabled={!product.inStock || isInCart}
-                    className={`w-full py-3 sm:py-4 px-4 sm:px-6 rounded-lg font-semibold flex items-center justify-center space-x-2 transition-colors text-sm sm:text-base ${
-                      isInCart
-                        ? "bg-gray-600 text-white cursor-not-allowed"
-                        : product.inStock
+                    className={`w-full py-3 sm:py-4 px-4 sm:px-6 rounded-lg font-semibold flex items-center justify-center space-x-2 transition-colors text-sm sm:text-base ${isInCart
+                      ? "bg-gray-600 text-white cursor-not-allowed"
+                      : product.inStock
                         ? "bg-emerald-600 text-white hover:bg-emerald-700"
                         : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    }`}
+                      }`}
                   >
                     {isInCart ? (
                       <>

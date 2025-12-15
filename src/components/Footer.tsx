@@ -12,7 +12,7 @@ export function Footer() {
             <p className="text-sm leading-relaxed">
               Lautech Market is the #1 online directory for student vendors in
               Ogbomoso. We replace the chaos of messy WhatsApp groups with a
-              clean, searchable platform.
+              clean, searchable platform. All for free.
             </p>
           </div>
 
@@ -89,12 +89,12 @@ export function Footer() {
             </h3>
             <ul className="space-y-2">
               <li className="flex items-center space-x-3 py-0.5">
-                <a
-                  href="https://wa.me/2348151993706?text=Good%20day%20Admin,%20I%20am%20interested%20in%20selling%20on%20LAUTECH%20Market"
+                <Link
+                  to="/vendor/register"
                   className="text-sm hover:text-emerald-400 transition-colors"
                 >
                   Sell on LAUTECH Market
-                </a>
+                </Link>
               </li>
               <li className="flex items-center space-x-3 py-0.5">
                 <a

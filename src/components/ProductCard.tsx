@@ -1,11 +1,13 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { ShoppingCart, MessageCircle, LinkIcon } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
+import { ShoppingCart, MessageCircle, LinkIcon, Store } from "lucide-react";
 import { Product } from "../types";
 import { addToCart } from "../utils/cart";
+import { VerifiedBadge } from "./VerifiedBadge";
 
 interface ProductCardProps {
   product: Product;
+  isVendorVerified?: boolean;
 }
 
 const formatPrice = (price: number): string => {
@@ -15,7 +17,7 @@ const formatPrice = (price: number): string => {
   }).format(price);
 };
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, isVendorVerified }: ProductCardProps) {
   const navigate = useNavigate();
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -107,9 +109,22 @@ export function ProductCard({ product }: ProductCardProps) {
             <span className="text-2xl font-bold text-gray-900">
               ₦{formatPrice(product.price)}
             </span>
-            <span className="text-xs text-gray-500">
-              by {product.vendorName}
-            </span>
+            {product.vendorId ? (
+              <Link
+                to={`/store/${product.vendorId}`}
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center space-x-1 text-xs text-gray-500 hover:text-emerald-600 transition-colors"
+                title="View vendor store"
+              >
+                <Store className="w-3 h-3" />
+                <span>{product.vendorName}</span>
+                {isVendorVerified && <VerifiedBadge size="sm" />}
+              </Link>
+            ) : (
+              <span className="text-xs text-gray-500">
+                by {product.vendorName}
+              </span>
+            )}
           </div>
 
           {product.inStock && (

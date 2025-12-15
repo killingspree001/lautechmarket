@@ -1,18 +1,23 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { FilterSidebar } from "../components/FilterSidebar";
 import { ProductCard } from "../components/ProductCard";
-import { Product, FilterOptions } from "../types";
+import { AnnouncementCarousel } from "../components/AnnouncementCarousel";
+import { Product, Vendor, FilterOptions } from "../types";
 import { getAllProducts } from "../services/products";
-import { AlertTriangleIcon } from "lucide-react";
+import { getAllVendors } from "../services/vendorAuth";
+import { Store } from "lucide-react";
+import { VerifiedBadge } from "../components/VerifiedBadge";
 
 export function Home() {
   const { category } = useParams<{ category?: string }>();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [vendors, setVendors] = useState<Vendor[]>([]);
+  const [filteredVendors, setFilteredVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -25,17 +30,22 @@ export function Home() {
   });
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       setLoading(true);
 
       try {
-        const data = await getAllProducts();
-        console.log(" Firestore products:", data);
+        // Fetch products and vendors in parallel
+        const [productsData, vendorsData] = await Promise.all([
+          getAllProducts(),
+          getAllVendors(),
+        ]);
 
-        setProducts(data);
+        console.log(" Firestore products:", productsData);
+        setProducts(productsData);
+        setVendors(vendorsData);
 
-        const categories = [...new Set(data.map((p) => p.category))];
-        const prices = data.map((p) => p.price);
+        const categories = [...new Set(productsData.map((p) => p.category))];
+        const prices = productsData.map((p) => p.price);
         const minPrice = Math.floor(Math.min(...prices));
         const maxPrice = Math.ceil(Math.max(...prices));
 
@@ -55,7 +65,7 @@ export function Home() {
       setLoading(false);
     };
 
-    fetchProducts();
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -74,7 +84,8 @@ export function Home() {
         (p) =>
           p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.category.toLowerCase().includes(searchQuery.toLowerCase())
+          p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (p.vendorName && p.vendorName.toLowerCase().includes(searchQuery.toLowerCase()))
       );
     }
 
@@ -90,6 +101,20 @@ export function Home() {
 
     setFilteredProducts(filtered);
   }, [products, searchQuery, selectedCategories, priceRange]);
+
+  // Filter vendors based on search query
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const filtered = vendors.filter(
+        (v) =>
+          v.businessName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          v.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredVendors(filtered);
+    } else {
+      setFilteredVendors([]);
+    }
+  }, [vendors, searchQuery]);
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategories((prev) =>
@@ -136,31 +161,57 @@ export function Home() {
           </div>
         </div>
 
+        {/* Announcement & Disclaimer Carousel - Single Box */}
         <section className="py-4">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="p-4 border bg-emerald-300">
-              <div className="flex items-start gap-3">
-                <AlertTriangleIcon className="w-6 h-6 text-black flex-shrink-0 mt-1" />
-                <div>
-                  <h3 className="text-lg font-semibold text-white mb-1">
-                    Disclaimer
-                  </h3>
-                  <p className="text-black">
-                    Do not make any preorder. Always PAY ON DELIVERY!
-                  </p>
-                </div>
-              </div>
-            </div>
+            <AnnouncementCarousel />
           </div>
         </section>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Matching Vendors Section (only shows when searching) */}
+          {filteredVendors.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">
+                Matching Vendors ({filteredVendors.length})
+              </h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                {filteredVendors.map((vendor) => (
+                  <Link
+                    key={vendor.id}
+                    to={`/store/${vendor.id}`}
+                    className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md hover:border-emerald-300 transition-all"
+                  >
+                    <div className="flex flex-col items-center text-center">
+                      {vendor.profileImage ? (
+                        <img
+                          src={vendor.profileImage}
+                          alt={vendor.businessName}
+                          className="w-12 h-12 rounded-full object-cover mb-2"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center mb-2">
+                          <Store className="w-6 h-6 text-emerald-600" />
+                        </div>
+                      )}
+                      <p className="font-medium text-gray-900 text-sm truncate w-full flex items-center justify-center gap-1">
+                        {vendor.businessName}
+                        {vendor.isVerified && <VerifiedBadge size="sm" />}
+                      </p>
+                      <p className="text-xs text-emerald-600">View Store →</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Products Section */}
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
               {category
-                ? `${
-                    category.charAt(0).toUpperCase() + category.slice(1)
-                  } Products`
+                ? `${category.charAt(0).toUpperCase() + category.slice(1)
+                } Products`
                 : "All Products"}
             </h1>
 
@@ -184,9 +235,16 @@ export function Home() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+              {filteredProducts.map((product) => {
+                const productVendor = vendors.find(v => v.id === product.vendorId);
+                return (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    isVendorVerified={productVendor?.isVerified || false}
+                  />
+                );
+              })}
             </div>
           )}
         </div>

@@ -1,18 +1,49 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Search, ShoppingCart, Menu, X, ChevronDown } from "lucide-react";
 import { getCart } from "../utils/cart";
+import { vendorAuthStateListener, logoutVendor } from "../services/vendorAuth";
+import { Vendor } from "../types";
 
 interface HeaderProps {
-  onSearch: (query: string) => void;
-  categories: string[];
+  onSearch?: (query: string) => void;
+  categories?: string[];
 }
 
-export function Header({ onSearch, categories }: HeaderProps) {
+/**
+ * Header Component
+ * 
+ * Main navigation header with search, categories, and cart.
+ * Shows different navigation based on vendor login state.
+ */
+export function Header({ onSearch, categories = [] }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [cartCount, setCartCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [currentVendor, setCurrentVendor] = useState<Vendor | null>(null);
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isOnDashboard = location.pathname === "/vendor/dashboard";
+
+  // Handle vendor logout
+  const handleLogout = async () => {
+    try {
+      await logoutVendor();
+      navigate("/");
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+
+  // Listen for vendor auth state changes
+  useEffect(() => {
+    const unsubscribe = vendorAuthStateListener((vendor) => {
+      setCurrentVendor(vendor);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const updateCartCount = () => {
@@ -28,7 +59,7 @@ export function Header({ onSearch, categories }: HeaderProps) {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
-    onSearch(query);
+    onSearch?.(query);
   };
 
   return (
@@ -44,7 +75,7 @@ export function Header({ onSearch, categories }: HeaderProps) {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder="Search products and vendors..."
                 value={searchQuery}
                 onChange={handleSearchChange}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
@@ -79,17 +110,46 @@ export function Header({ onSearch, categories }: HeaderProps) {
             </div>
 
             <Link to="/contact" className="text-gray-700 hover:text-emerald-600 transition-colors">
-            Contact Support
-          </Link>
+              Contact Support
+            </Link>
 
-            <a
-              href="https://wa.me/2348151993706?text=Good%20day%20Admin,%20I%20am%20interested%20in%20selling%20on%20LAUTECH%20Market"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-700 hover:text-emerald-600 transition-colors"
-            >
-              Sell Now
-            </a>
+            {/* Dynamic Vendor Links */}
+            {currentVendor ? (
+              // Logged in as vendor
+              isOnDashboard ? (
+                // On dashboard - show Logout
+                <button
+                  onClick={handleLogout}
+                  className="text-gray-700 hover:text-emerald-600 transition-colors"
+                >
+                  Logout
+                </button>
+              ) : (
+                // On other pages - show My Store
+                <Link
+                  to="/vendor/dashboard"
+                  className="text-gray-700 hover:text-emerald-600 transition-colors"
+                >
+                  My Store
+                </Link>
+              )
+            ) : (
+              // Not logged in - show Sell Now and Vendor Login
+              <>
+                <Link
+                  to="/vendor/register"
+                  className="text-gray-700 hover:text-emerald-600 transition-colors"
+                >
+                  Sell Now
+                </Link>
+                <Link
+                  to="/vendor/login"
+                  className="text-gray-700 hover:text-emerald-600 transition-colors"
+                >
+                  Vendor Login
+                </Link>
+              </>
+            )}
 
             <Link to="/cart" className="relative">
               <ShoppingCart className="w-6 h-6 text-gray-700 hover:text-emerald-600 transition-colors" />
@@ -141,21 +201,50 @@ export function Header({ onSearch, categories }: HeaderProps) {
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-gray-200 bg-white">
           <nav className="px-4 py-2 space-y-4">
-            
-
             <Link to="/contact"
               className="block py-2 text-gray-700 hover:text-emerald-600">
               Contact Support
             </Link>
 
-            <a
-              href="https://wa.me/2348151993706?text=Good%20day%20Admin,%20I%20am%20interested%20in%20selling%20on%20LAUTECH%20Market"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-700 hover:text-emerald-600 transition-colors"
-            >
-              Sell Now
-            </a>
+            {/* Dynamic Vendor Links for Mobile */}
+            {currentVendor ? (
+              isOnDashboard ? (
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="block py-2 text-gray-700 hover:text-emerald-600 transition-colors w-full text-left"
+                >
+                  Logout
+                </button>
+              ) : (
+                <Link
+                  to="/vendor/dashboard"
+                  className="block py-2 text-gray-700 hover:text-emerald-600 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  My Store
+                </Link>
+              )
+            ) : (
+              <>
+                <Link
+                  to="/vendor/register"
+                  className="block py-2 text-gray-700 hover:text-emerald-600 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Sell Now
+                </Link>
+                <Link
+                  to="/vendor/login"
+                  className="block py-2 text-gray-700 hover:text-emerald-600 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Vendor Login
+                </Link>
+              </>
+            )}
           </nav>
         </div>
       )}

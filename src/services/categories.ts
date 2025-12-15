@@ -1,14 +1,5 @@
 import { db } from "../firebase";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  doc,
-  updateDoc,
-  deleteDoc,
-  query,
-  orderBy,
-} from "firebase/firestore";
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from "firebase/firestore";
 
 export interface Category {
   id: string;
@@ -21,12 +12,12 @@ export const fetchCategories = async (): Promise<Category[]> => {
   const q = query(collection(db, "categories"), orderBy("name"));
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.map(
-    (doc) =>
-      ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt: doc.data().createdAt?.toDate() || new Date(),
-      } as Category)
+    (docSnap) =>
+    ({
+      id: docSnap.id,
+      ...docSnap.data(),
+      createdAt: docSnap.data().createdAt?.toDate() || new Date(),
+    } as Category)
   );
 };
 
@@ -60,8 +51,8 @@ export const deleteCategory = async (id: string): Promise<void> => {
 };
 
 export const categoryExists = async (name: string): Promise<boolean> => {
-  const categories = await fetchCategories();
-  return categories.some(
+  const allCategories = await fetchCategories();
+  return allCategories.some(
     (cat) => cat.name.toLowerCase() === name.toLowerCase().trim()
   );
 };

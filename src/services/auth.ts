@@ -1,20 +1,11 @@
 import { auth } from "../firebase";
-import {
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  User,
-} from "firebase/auth";
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged, User } from "firebase/auth";
 
 export const loginUser = async (
   email: string,
   password: string
 ): Promise<User> => {
-  const userCredential = await signInWithEmailAndPassword(
-    auth,
-    email,
-    password
-  );
+  const userCredential = await signInWithEmailAndPassword(auth, email, password);
   return userCredential.user;
 };
 
@@ -31,5 +22,5 @@ export const getCurrentUser = (): User | null => {
 };
 
 export const isUserLoggedIn = (): boolean => {
-  return !!auth.currentUser;
+  return auth.currentUser !== null;
 };
