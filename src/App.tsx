@@ -11,11 +11,13 @@ import { VendorRegister } from "./pages/vendor/VendorRegister";
 import { VendorLogin } from "./pages/vendor/VendorLogin";
 import { VendorDashboard } from "./pages/vendor/VendorDashboard";
 import { VendorStore } from "./pages/vendor/VendorStore";
+import { VerifyEmail } from "./pages/vendor/VerifyEmail";
 import { authStateListener } from "./services/auth";
 import { vendorAuthStateListener } from "./services/vendorAuth";
 import { trackVisit } from "./services/analytics";
 import { ChatbotButton } from "./components/ChatbotButton";
 import ScrollToTop from "./components/ScrollToTop";
+import { auth } from "./firebase";
 
 // Track visit on app load
 trackVisit();
@@ -60,19 +62,24 @@ function AdminProtectedRoute({ children }: { children: JSX.Element }) {
 /**
  * VendorProtectedRoute Component
  * 
- * Protects vendor routes by checking authentication state.
+ * Protects vendor routes by checking authentication state and email verification.
  * Redirects to vendor login if not authenticated.
+ * Redirects to verify-email if email is not verified.
  */
 function VendorProtectedRoute({ children }: { children: JSX.Element }) {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [emailVerified, setEmailVerified] = useState(false);
 
   useEffect(() => {
     const unsubscribe = vendorAuthStateListener((vendor) => {
       if (vendor) {
         setIsAuthenticated(true);
+        // Check Firebase auth for email verification status
+        setEmailVerified(auth.currentUser?.emailVerified || false);
       } else {
         setIsAuthenticated(false);
+        setEmailVerified(false);
       }
       setLoading(false);
     });
@@ -89,6 +96,10 @@ function VendorProtectedRoute({ children }: { children: JSX.Element }) {
 
   if (!isAuthenticated) {
     return <Navigate to="/vendor/login" />;
+  }
+
+  if (!emailVerified) {
+    return <Navigate to="/vendor/verify-email" />;
   }
 
   return children;
@@ -126,6 +137,7 @@ export default function App() {
         {/* Vendor Routes */}
         <Route path="/vendor/register" element={<VendorRegister />} />
         <Route path="/vendor/login" element={<VendorLogin />} />
+        <Route path="/vendor/verify-email" element={<VerifyEmail />} />
         <Route
           path="/vendor/dashboard"
           element={
@@ -145,3 +157,4 @@ export default function App() {
     </BrowserRouter>
   );
 }
+
