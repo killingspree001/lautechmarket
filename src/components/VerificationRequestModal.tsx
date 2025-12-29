@@ -93,7 +93,7 @@ export function VerificationRequestModal({
                 vendorId,
                 vendorName,
                 vendorEmail,
-                whatsappNumber.trim(),
+                `+234${whatsappNumber.trim()}`,
                 location.trim(),
                 uploadResult.url
             );
@@ -169,13 +169,27 @@ export function VerificationRequestModal({
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 WhatsApp Number
                             </label>
-                            <input
-                                type="tel"
-                                value={whatsappNumber}
-                                onChange={(e) => setWhatsappNumber(e.target.value)}
-                                placeholder="e.g. 08012345678"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                            />
+                            <div className="flex">
+                                <span className="inline-flex items-center px-4 py-3 bg-gray-100 border border-r-0 border-gray-300 rounded-l-lg text-gray-600 font-medium">
+                                    +234
+                                </span>
+                                <input
+                                    type="tel"
+                                    value={whatsappNumber}
+                                    onChange={(e) => {
+                                        let value = e.target.value.replace(/\D/g, ''); // Only digits
+                                        if (value.startsWith('0')) {
+                                            value = value.substring(1); // Remove leading 0
+                                        }
+                                        if (value.length <= 10) {
+                                            setWhatsappNumber(value);
+                                        }
+                                    }}
+                                    maxLength={10}
+                                    placeholder="8012345678"
+                                    className="flex-1 px-4 py-3 border border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                />
+                            </div>
                         </div>
 
                         {/* Location Input */}

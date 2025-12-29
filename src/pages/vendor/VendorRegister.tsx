@@ -79,7 +79,7 @@ export function VendorRegister() {
                 formData.name,
                 formData.email,
                 formData.password,
-                formData.whatsappNumber,
+                `+234${formData.whatsappNumber}`,
                 formData.businessName,
                 formData.description,
                 formData.storeAddress
@@ -219,17 +219,28 @@ export function VendorRegister() {
                             >
                                 WhatsApp Number
                             </label>
-                            <div className="relative">
-                                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                            <div className="relative flex">
+                                <span className="inline-flex items-center px-4 py-3 bg-gray-100 border border-r-0 border-gray-300 rounded-l-lg text-gray-600 font-medium">
+                                    +234
+                                </span>
                                 <input
                                     id="whatsappNumber"
                                     name="whatsappNumber"
                                     type="tel"
                                     value={formData.whatsappNumber}
-                                    onChange={handleChange}
+                                    onChange={(e) => {
+                                        let value = e.target.value.replace(/\D/g, ''); // Only digits
+                                        if (value.startsWith('0')) {
+                                            value = value.substring(1); // Remove leading 0
+                                        }
+                                        if (value.length <= 10) {
+                                            setFormData(prev => ({ ...prev, whatsappNumber: value }));
+                                        }
+                                    }}
                                     required
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                                    placeholder="+234 801 234 5678"
+                                    maxLength={10}
+                                    className="flex-1 px-4 py-3 border border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                                    placeholder="8012345678"
                                 />
                             </div>
                         </div>
