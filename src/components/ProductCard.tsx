@@ -105,26 +105,28 @@ export function ProductCard({ product, isVendorVerified }: ProductCardProps) {
             {product.description}
           </p>
 
-          <div className="flex items-center justify-between mb-3">
+          <div className="mb-3">
             <span className="text-2xl font-bold text-gray-900">
               ₦{formatPrice(product.price)}
             </span>
-            {product.vendorId ? (
-              <Link
-                to={`/store/${product.vendorId}`}
-                onClick={(e) => e.stopPropagation()}
-                className="flex items-center space-x-1 text-xs text-gray-500 hover:text-emerald-600 transition-colors"
-                title="View vendor store"
-              >
-                <Store className="w-3 h-3" />
-                <span>{product.vendorName}</span>
-                {isVendorVerified && <VerifiedBadge size="sm" />}
-              </Link>
-            ) : (
-              <span className="text-xs text-gray-500">
-                by {product.vendorName}
-              </span>
-            )}
+            <div className="mt-1">
+              {product.vendorId ? (
+                <Link
+                  to={`/store/${product.vendorId}`}
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center space-x-1 text-xs text-gray-500 hover:text-emerald-600 transition-colors max-w-full"
+                  title={product.vendorName}
+                >
+                  <Store className="w-3 h-3 flex-shrink-0" />
+                  <span className="truncate">{product.vendorName}</span>
+                  {isVendorVerified && <VerifiedBadge size="sm" />}
+                </Link>
+              ) : (
+                <span className="text-xs text-gray-500 truncate block">
+                  by {product.vendorName}
+                </span>
+              )}
+            </div>
           </div>
 
           {product.inStock && (

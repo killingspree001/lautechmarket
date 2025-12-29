@@ -170,7 +170,7 @@ export function VerificationRequestModal({
                                 WhatsApp Number
                             </label>
                             <div className="flex">
-                                <span className="inline-flex items-center px-4 py-3 bg-gray-100 border border-r-0 border-gray-300 rounded-l-lg text-gray-600 font-medium">
+                                <span className="inline-flex items-center px-3 py-3 bg-gray-100 border border-r-0 border-gray-300 rounded-l-lg text-gray-600 font-medium text-sm">
                                     +234
                                 </span>
                                 <input
