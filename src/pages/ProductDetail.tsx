@@ -17,6 +17,9 @@ import { getProductById, fetchProducts } from "../services/products";
 import { addToCart } from "../utils/cart";
 import { ShareButton } from "../components/ShareButton";
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { VerifiedBadge } from "../components/VerifiedBadge";
+import { db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -24,10 +27,11 @@ export function ProductDetail() {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
-  const [] = useState(0);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isInCart, setIsInCart] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
+  const [vendor, setVendor] = useState<Vendor | null>(null);
   useDocumentTitle(product?.name || "Product Details");
 
   useEffect(() => {
